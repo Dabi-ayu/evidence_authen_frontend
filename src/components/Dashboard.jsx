@@ -41,7 +41,7 @@ export default function Dashboard({ results, onViewReport }) {
         {['Tampering Detection', 'Metadata Verification', 'Report Generation'].map((step, i) => (
           <div key={i} className="flex flex-col items-center">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              i < 2 ? 'bg-[#2563EB] text-white' : 'bg-gray-200 text-gray-500'
+              i < 2 ? 'bg-[#2563EB] text-white' : 'bg-[#2563EB] text-white'
             }`}>
               {i + 1}
             </div>
