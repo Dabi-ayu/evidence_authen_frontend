@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Lock, User } from 'lucide-react';
 
 export default function Login({ user, onLogin, onError }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Redirect if already logged in
   useEffect(() => {
     if (user) {
       navigate("/", { replace: true });
@@ -44,18 +45,58 @@ export default function Login({ user, onLogin, onError }) {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Login</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-md mx-auto bg-white p-8 mt-16 rounded-xl shadow-lg">
+      <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">Welcome Back</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
+        {/* Username Field */}
         <div>
-          <label className="block text-sm font-medium">Username</label>
-          <input type="text" value={username} onChange={e => setUsername(e.target.value)} className="w-full px-3 py-2 border rounded" required />
+          <label className="block text-sm font-medium mb-1 text-gray-700">Username</label>
+          <div className="flex items-center border rounded px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+            <User className="text-gray-400 mr-2 w-5 h-5" />
+            <input
+              type="text"
+              name="username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              className="w-full outline-none text-sm"
+              autoComplete="off"
+              required
+            />
+          </div>
         </div>
+
+        {/* Password Field */}
         <div>
-          <label className="block text-sm font-medium">Password</label>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full px-3 py-2 border rounded" required />
+          <label className="block text-sm font-medium mb-1 text-gray-700">Password</label>
+          <div className="flex items-center border rounded px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500">
+            <Lock className="text-gray-400 mr-2 w-5 h-5" />
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="w-full outline-none text-sm"
+              autoComplete="new-password"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="ml-2 text-gray-400 hover:text-gray-700 focus:outline-none"
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
-        <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded">
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition"
+        >
           {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>

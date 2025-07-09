@@ -1,24 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 
 import Upload from './components/Upload';
 import Dashboard from './components/Dashboard';
 import Report from './components/Report';
+import { FaUserCircle } from 'react-icons/fa';
 
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 
 import ProtectedRoute from './pages/ProtectedRoute';
+import { FaCamera } from 'react-icons/fa';
 
-export default function App() {
+
+function AppContent() {
   const [file, setFile] = useState(null);
   const [results, setResults] = useState(null);
   const [showReport, setShowReport] = useState(false);
 
-  const [user, setUser] = useState(null);  // { username, accessToken }
+  const [user, setUser] = useState(null);
   const [authError, setAuthError] = useState(null);
 
-  // On app load, check if user tokens exist in localStorage
+  const navigate = useNavigate();
+
   useEffect(() => {
     const access = localStorage.getItem('accessToken');
     const username = localStorage.getItem('username');
@@ -27,7 +31,6 @@ export default function App() {
     }
   }, []);
 
-  // Log user out
   const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -38,7 +41,6 @@ export default function App() {
     setShowReport(false);
   };
 
-  // Handle image upload and analysis with authenticated request
   const analyzeImage = async (uploadedFile) => {
     setFile(uploadedFile);
 
@@ -53,7 +55,6 @@ export default function App() {
     try {
       const formData = new FormData();
       formData.append('image', uploadedFile);
-
       setResults({ status: 'loading' });
 
       const response = await fetch('http://127.0.0.1:8000/api/verify/', {
@@ -95,82 +96,101 @@ export default function App() {
     }
   };
 
-  // Handle login response (called from Login component)
   const handleLogin = (userData) => {
     setUser(userData);
     setAuthError(null);
   };
 
-  // Handle login error
   const handleAuthError = (errorMessage) => {
     setAuthError(errorMessage);
   };
 
-  // Handle registration success (called from Register component)
   const handleRegisterSuccess = () => {
     setAuthError(null);
   };
 
+  const handleTitleClick = () => {
+    setFile(null);
+    setResults(null);
+    setShowReport(false);
+    navigate('/');
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow p-2 mb-8 flex justify-between items-center px-6">
+        <button
+          onClick={handleTitleClick}
+          className="flex items-center gap-2 text-xl font-bold text-blue-600 hover:text-blue-700 transition"
+        >
+          <FaCamera className="text-2xl" />
+          Image Evidence Authenticator
+        </button>
+
+        <div>
+          {user ? (
+            <>
+              <span className="mr-4 gap-2">
+                <FaUserCircle className="text-2xl text-gray-600" />
+                <strong>{user.username}</strong>
+              </span>
+              <button
+                onClick={logout}
+                className="py-1 ml-28 px-3 bg-red-600 hover:bg-red-700 text-white rounded"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <a href="/login" className="mr-4 text-blue-600 hover:underline">Login</a>
+              <a href="/register" className="text-blue-600 hover:underline">Register</a>
+            </>
+          )}
+        </div>
+      </header>
+
+      <Routes>
+        <Route path="/" element={<ProtectedRoute user={user} redirectPath="/login" />}>
+          <Route
+            index
+            element={
+              !file ? (
+                <Upload onFileUpload={analyzeImage} />
+              ) : showReport ? (
+                <Report results={results} file={file} onBack={() => setShowReport(false)} />
+              ) : (
+                <Dashboard results={results} onViewReport={() => setShowReport(true)} />
+              )
+            }
+          />
+        </Route>
+
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" replace /> : <Login onLogin={handleLogin} onError={handleAuthError} />}
+        />
+        <Route
+          path="/register"
+          element={user ? <Navigate to="/" replace /> : <Register onRegisterSuccess={handleRegisterSuccess} onError={handleAuthError} />}
+        />
+        <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />
+      </Routes>
+
+      {authError && (
+        <div className="max-w-4xl mx-auto mt-4 p-3 bg-red-100 text-red-800 rounded shadow">
+          <strong>Error:</strong> {authError}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Wrap AppContent in Router
+export default function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50 p-6">
-        <header className="flex justify-between items-center mb-8 max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-[#2563EB]">Image Evidence Authenticator</h1>
-          <div>
-            {user ? (
-              <>
-                <span className="mr-4">Welcome, <strong>{user.username}</strong></span>
-                <button
-                  onClick={logout}
-                  className="py-1 px-3 bg-red-600 hover:bg-red-700 text-white rounded"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <a href="/login" className="mr-4 text-blue-600 hover:underline">Login</a>
-                <a href="/register" className="text-blue-600 hover:underline">Register</a>
-              </>
-            )}
-          </div>
-        </header>
-
-        <Routes>
-          <Route path="/" element={<ProtectedRoute user={user} redirectPath="/login" />}>
-            <Route
-              index
-              element={
-                !file ? (
-                  <Upload onFileUpload={analyzeImage} />
-                ) : showReport ? (
-                  <Report results={results} file={file} onBack={() => setShowReport(false)} />
-                ) : (
-                  <Dashboard results={results} onViewReport={() => setShowReport(true)} />
-                )
-              }
-            />
-          </Route>
-
-          {/* Other routes */}
-          <Route
-            path="/login"
-            element={user ? <Navigate to="/" replace /> : <Login onLogin={handleLogin} onError={handleAuthError} />}
-          />
-          <Route
-            path="/register"
-            element={user ? <Navigate to="/" replace /> : <Register onRegisterSuccess={handleRegisterSuccess} onError={handleAuthError} />}
-          />
-          <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />
-        </Routes>
-
-
-        {authError && (
-          <div className="max-w-4xl mx-auto mt-4 p-3 bg-red-100 text-red-800 rounded shadow">
-            <strong>Error:</strong> {authError}
-          </div>
-        )}
-      </div>
+      <AppContent />
     </Router>
   );
 }
