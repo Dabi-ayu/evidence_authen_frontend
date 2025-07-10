@@ -1,4 +1,9 @@
+import { useState } from 'react';
+
 export default function Report({ results, file, onBack }) {
+    console.log("blockchainHash from props:", results?.blockchainHash);
+  const [verificationStatus, setVerificationStatus] = useState(null);
+
   if (!results || results.status !== 'complete') {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto text-center py-10">
@@ -29,6 +34,27 @@ export default function Report({ results, file, onBack }) {
 
   const metadata = results.metadata || {};
 
+  const handleVerifyTXID = async () => {
+    try {
+      const response = await fetch('/api/verify-txid/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ txid: results.blockchainHash }),
+      });
+
+      const data = await response.json();
+      if (data.status === 'valid') {
+        setVerificationStatus('✅ Blockchain timestamp is valid');
+      } else {
+        setVerificationStatus('❌ Invalid or unverifiable timestamp');
+      }
+    } catch (error) {
+      setVerificationStatus('⚠️ Error verifying timestamp');
+    }
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
       <style>{`
@@ -56,12 +82,25 @@ export default function Report({ results, file, onBack }) {
       </div>
 
       <div className="print-content">
-        {/* Blockchain */}
+        {/* Blockchain Section */}
         <div className="mb-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
           <p className="font-medium">Blockchain Verification:</p>
           <p className="font-mono text-sm break-all">
-            TXID: {results.blockchainHash || "No verification record"}
+            TXID: {results.blockchainHash || 'No verification record'}
           </p>
+          {results.blockchainHash && (
+            <div className="mt-2">
+              <button
+                onClick={handleVerifyTXID}
+                className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+              >
+                Verify TXID
+              </button>
+              {verificationStatus && (
+                <p className="text-sm mt-2 text-gray-700">{verificationStatus}</p>
+              )}
+            </div>
+          )}
         </div>
 
         {/* File Info */}
@@ -74,17 +113,26 @@ export default function Report({ results, file, onBack }) {
             </div>
             <div>
               <p className="text-gray-500 text-sm">Analysis Date:</p>
-              <p className="font-medium">{metadata.timestamp || new Date().toLocaleString()}</p>
+              <p className="font-medium">
+                {metadata.timestamp || new Date().toLocaleString()}
+              </p>
             </div>
           </div>
         </div>
 
         {/* Tampering */}
-        <div className={`mb-8 p-4 rounded-lg ${results.isAuthentic ? 'bg-teal-50 border-l-4 border-teal-500' : 'bg-red-50 border-l-4 border-red-500'
-          }`}>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Tampering Detection</h3>
+        <div
+          className={`mb-8 p-4 rounded-lg ${
+            results.isAuthentic
+              ? 'bg-teal-50 border-l-4 border-teal-500'
+              : 'bg-red-50 border-l-4 border-red-500'
+          }`}
+        >
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            Tampering Detection
+          </h3>
           <p className={results.isAuthentic ? 'text-teal-800' : 'text-red-800'}>
-            {results.isAuthentic ? '✅ Authentic' : '❌ Tampering Detected'}
+            {results.isAuthentic ? '✅ Real' : '❌ Fake'}
           </p>
           <p>
             {results.isAuthentic ? 'Authenticity Confidence' : 'Tampering Confidence'}:
@@ -99,23 +147,29 @@ export default function Report({ results, file, onBack }) {
             <div className="mb-4 grid grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-500 text-sm">Status:</p>
-                <p className={`font-medium ${metadata.status === "Clean" ? 'text-green-600' : 'text-red-600'}`}>
-                  {metadata.status || "Not verified"}
+                <p
+                  className={`font-medium ${
+                    metadata.status === 'Clean' ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
+                  {metadata.status || 'Not verified'}
                 </p>
               </div>
               <div>
                 <p className="text-gray-500 text-sm">Captured Device:</p>
-                <p className="font-medium">{metadata.device || "Unknown"}</p>
+                <p className="font-medium">{metadata.device || 'Unknown'}</p>
               </div>
               <div>
                 <p className="text-gray-500 text-sm">Location (GPS):</p>
-                <p className="font-medium">{metadata.location || "Unavailable"}</p>
+                <p className="font-medium">{metadata.location || 'Unavailable'}</p>
               </div>
             </div>
 
             {metadata.details && Object.keys(metadata.details).length > 0 && (
               <div className="mt-4">
-                <h4 className="text-sm font-semibold text-gray-600 mb-2">Extracted Metadata:</h4>
+                <h4 className="text-sm font-semibold text-gray-600 mb-2">
+                  Extracted Metadata:
+                </h4>
                 <div className="max-h-64 overflow-auto border rounded p-2 text-xs bg-white shadow-inner">
                   {Object.entries(metadata.details).map(([key, value], i) => (
                     <div key={i} className="mb-1">
@@ -139,16 +193,19 @@ export default function Report({ results, file, onBack }) {
           </div>
         </div>
 
-        {/* Footer (Print) */}
+        {/* Footer for Print */}
         <div className="hidden print:block mt-16 pt-4 border-t text-sm text-gray-500">
           <p>Generated by Image Evidence Authenticator</p>
           <p>Printed on: {new Date().toLocaleString()}</p>
         </div>
       </div>
 
+      {/* Download PDF Button */}
       <div className="border-t pt-4 mt-6 no-print">
-        <button onClick={() => window.print()}
-          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+        <button
+          onClick={() => window.print()}
+          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
+        >
           Export as PDF
         </button>
       </div>

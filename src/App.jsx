@@ -57,7 +57,7 @@ function AppContent() {
       formData.append('image', uploadedFile);
       setResults({ status: 'loading' });
 
-      const response = await fetch('http://127.0.0.1:8000/api/verify/', {
+      const response = await fetch('`${process.env.REACT_APP_API_URL}verify/', {
         method: 'POST',
         body: formData,
         headers: {
