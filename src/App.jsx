@@ -56,8 +56,9 @@ function AppContent() {
       const formData = new FormData();
       formData.append('image', uploadedFile);
       setResults({ status: 'loading' });
+      //`${process.env.REACT_APP_API_URL}`verify/
 
-      const response = await fetch('`${process.env.REACT_APP_API_URL}verify/', {
+      const response = await fetch('http://127.0.0.1:8000/api/verify/', {
         method: 'POST',
         body: formData,
         headers: {
@@ -85,7 +86,7 @@ function AppContent() {
           details: data.metadata_details || {},
           inconsistencies: data.metadata_status !== "Clean" ? [data.metadata_status] : []
         },
-        blockchainHash: data.blockchain_hash,
+        imageHash: data.image_hash
       });
 
     } catch (error) {

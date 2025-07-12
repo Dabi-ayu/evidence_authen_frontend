@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
 export default function Report({ results, file, onBack }) {
-    console.log("blockchainHash from props:", results?.blockchainHash);
-  const [verificationStatus, setVerificationStatus] = useState(null);
+    console.log("🚀 Frontend received results:", results);
+
+
 
   if (!results || results.status !== 'complete') {
     return (
@@ -34,26 +35,7 @@ export default function Report({ results, file, onBack }) {
 
   const metadata = results.metadata || {};
 
-  const handleVerifyTXID = async () => {
-    try {
-      const response = await fetch('/api/verify-txid/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ txid: results.blockchainHash }),
-      });
 
-      const data = await response.json();
-      if (data.status === 'valid') {
-        setVerificationStatus('✅ Blockchain timestamp is valid');
-      } else {
-        setVerificationStatus('❌ Invalid or unverifiable timestamp');
-      }
-    } catch (error) {
-      setVerificationStatus('⚠️ Error verifying timestamp');
-    }
-  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
@@ -84,49 +66,24 @@ export default function Report({ results, file, onBack }) {
       <div className="print-content">
         {/* Blockchain Section */}
         <div className="mb-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-          <p className="font-medium">Blockchain Verification:</p>
+          <p className="font-medium">Image Authenticity:</p>
           <p className="font-mono text-sm break-all">
-            TXID: {results.blockchainHash || 'No verification record'}
+            Hash value: {results.imageHash || 'No hash record'}
           </p>
-          {results.blockchainHash && (
-            <div className="mt-2">
-              <button
-                onClick={handleVerifyTXID}
-                className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
-              >
-                Verify TXID
-              </button>
-              {verificationStatus && (
-                <p className="text-sm mt-2 text-gray-700">{verificationStatus}</p>
-              )}
-            </div>
-          )}
+          <p className="text-xs text-gray-500 mt-1">
+            This hash can be used later to verify if the image has been modified. Re-uploading the same image will produce the same hash.
+          </p>
+         
+           
         </div>
 
-        {/* File Info */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">File Details</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-gray-500 text-sm">Filename:</p>
-              <p className="font-medium">{file.name}</p>
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm">Analysis Date:</p>
-              <p className="font-medium">
-                {metadata.timestamp || new Date().toLocaleString()}
-              </p>
-            </div>
-          </div>
-        </div>
 
         {/* Tampering */}
         <div
-          className={`mb-8 p-4 rounded-lg ${
-            results.isAuthentic
-              ? 'bg-teal-50 border-l-4 border-teal-500'
-              : 'bg-red-50 border-l-4 border-red-500'
-          }`}
+          className={`mb-8 p-4 rounded-lg ${results.isAuthentic
+            ? 'bg-teal-50 border-l-4 border-teal-500'
+            : 'bg-red-50 border-l-4 border-red-500'
+            }`}
         >
           <h3 className="text-lg font-semibold text-gray-800 mb-2">
             Tampering Detection
@@ -148,9 +105,8 @@ export default function Report({ results, file, onBack }) {
               <div>
                 <p className="text-gray-500 text-sm">Status:</p>
                 <p
-                  className={`font-medium ${
-                    metadata.status === 'Clean' ? 'text-green-600' : 'text-red-600'
-                  }`}
+                  className={`font-medium ${metadata.status === 'Clean' ? 'text-green-600' : 'text-red-600'
+                    }`}
                 >
                   {metadata.status || 'Not verified'}
                 </p>
