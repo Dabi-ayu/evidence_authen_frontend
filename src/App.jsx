@@ -79,7 +79,7 @@ function AppContent() {
 
       setResults({
         status: 'complete',
-        isAuthentic: data.is_authentic,
+        isFake: data.is_authentic,
         confidence: data.confidence,
         metadata: {
           status: data.metadata_status,
