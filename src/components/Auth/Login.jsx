@@ -20,9 +20,10 @@ export default function Login({ user, onLogin, onError }) {
     setLoading(true);
 
     try {
-      console.log('API URL:', process.env.REACT_APP_API_URL);
+      //console.log('API URL:', process.env.REACT_APP_API_URL);
+      const API_URL = 'https://evidence-authen-backend-4.onrender.com/api/';
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}token/`, {
+      const response = await fetch(`${API_URL}token/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
