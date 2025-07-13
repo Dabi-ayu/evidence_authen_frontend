@@ -29,8 +29,8 @@ export default function Login({ user, onLogin, onError }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: 'lawyer1',
-          password: 'imgloglawyer',
+          username,
+          password
         }),
       });
 
