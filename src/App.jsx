@@ -59,8 +59,9 @@ function AppContent() {
       formData.append('image', uploadedFile);
       setResults({ status: 'loading' });
       //
-      console.log(`${process.env.VITE_API_BASE_URL}verify/`);
-      const response = await fetch(`${process.env.VITE_API_BASE_URL}verify/`
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+      const response = await fetch(`${API_BASE_URL}token/`
         , {
           method: 'POST',
           body: formData,
