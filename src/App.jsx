@@ -15,8 +15,7 @@ import { FaCamera } from 'react-icons/fa';
 
 function AppContent() {
   // index.js
-console.log("Environment Variables:", import.meta.env); // For Vite
-console.log("API Base URL:", import.meta.env.VITE_API_BASE_URL);
+
   const [file, setFile] = useState(null);
   const [results, setResults] = useState(null);
   const [showReport, setShowReport] = useState(false);
