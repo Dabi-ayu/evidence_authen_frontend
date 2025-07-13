@@ -82,6 +82,20 @@ export default function Report({ results, onBack }) {
             </div>
           </div>
         </div>
+        {/* File Info */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">File Details</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-gray-500 text-sm">Filename:</p>
+              <p className="font-medium">{file.name}</p>
+            </div>
+            <div>
+              <p className="text-gray-500 text-sm">Analysis Date:</p>
+              <p className="font-medium">{metadata.timestamp || new Date().toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
         {/* Tampering Detection */}
         <div
           className={`mb-8 p-4 rounded-lg ${isFake
