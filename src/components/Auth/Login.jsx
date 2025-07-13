@@ -27,11 +27,7 @@ export default function Login({ user, onLogin, onError }) {
         body: JSON.stringify({ username, password })
       });
 
-      // Correct token request
-const response = await apiClient.post('token/', {
-  username: 'your-username',
-  password: 'your-password'
-});
+      const data = await response.json();
 
       if (response.ok) {
         localStorage.setItem('accessToken', data.access);
