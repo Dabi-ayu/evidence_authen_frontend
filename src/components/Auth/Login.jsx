@@ -22,12 +22,16 @@ export default function Login({ user, onLogin, onError }) {
     try {
 
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-    
 
       const response = await fetch(`${API_BASE_URL}token/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: 'lawyer1',
+          password: 'imgloglawyer',
+        }),
       });
 
 
