@@ -20,6 +20,8 @@ export default function Login({ user, onLogin, onError }) {
     setLoading(true);
 
     try {
+      console.log('API URL:', `${process.env.REACT_APP_API_URL}token/`);
+
       const response = await fetch(`${process.env.REACT_APP_API_URL}token/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
