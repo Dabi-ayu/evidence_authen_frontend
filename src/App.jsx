@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-
+import { Link } from 'react-router-dom';
 import Upload from './components/Upload';
 import Dashboard from './components/Dashboard';
 import Report from './components/Report';
@@ -59,13 +59,13 @@ function AppContent() {
       //
 
       const response = await fetch(`${process.env.REACT_APP_API_URL}verify/`
-, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${user.accessToken}`,
-        },
-      });
+        , {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -178,6 +178,7 @@ function AppContent() {
         />
         <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />
       </Routes>
+
 
       {authError && (
         <div className="max-w-4xl mx-auto mt-4 p-3 bg-red-100 text-red-800 rounded shadow">
