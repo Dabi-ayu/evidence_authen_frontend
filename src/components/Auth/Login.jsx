@@ -20,7 +20,7 @@ export default function Login({ user, onLogin, onError }) {
     setLoading(true);
 
     try {
-      console.log('API URL:', `${process.env.REACT_APP_API_URL}token/`);
+      console.log('API URL:', `${process.env.VITE_API_BASE_URL}token/`);
 
       const response = await fetch(`${process.env.REACT_APP_API_URL}token/`, {
         method: 'POST',

@@ -14,6 +14,9 @@ import { FaCamera } from 'react-icons/fa';
 
 
 function AppContent() {
+  // index.js
+console.log('Environment:', process.env.NODE_ENV);
+console.log('API URL:', process.env.REACT_APP_API_URL);
   const [file, setFile] = useState(null);
   const [results, setResults] = useState(null);
   const [showReport, setShowReport] = useState(false);
@@ -58,7 +61,7 @@ function AppContent() {
       setResults({ status: 'loading' });
       //
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}verify/`
+      const response = await fetch(`${process.env.VITE_API_BASE_URL}verify/`
         , {
           method: 'POST',
           body: formData,
