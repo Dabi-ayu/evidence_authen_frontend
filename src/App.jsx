@@ -92,7 +92,7 @@ function AppContent() {
         },
         imageHash: data.image_hash
       });
-
+console.log(details);
     } catch (error) {
       setResults({
         status: 'error',
