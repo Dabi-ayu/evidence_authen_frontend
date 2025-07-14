@@ -90,9 +90,12 @@ function AppContent() {
           details: data.metadata_details || {},
           inconsistencies: data.metadata_status !== "Clean" ? [data.metadata_status] : []
         },
-        imageHash: data.image_hash
+        imageHash: data.image_hash,
+        fileName: data.filename,
+        timeStamp: data.timestamp,
+        location: data.metadata_location,
+        device: data.metadata_device
       });
-console.log(metadata.details);
     } catch (error) {
       setResults({
         status: 'error',

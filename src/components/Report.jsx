@@ -1,7 +1,7 @@
 
 
 export default function Report({ results, onBack }) {
- 
+  console.log(results.metadata.details)
 
   if (!results || results.status !== 'complete') {
     return (
@@ -19,7 +19,7 @@ export default function Report({ results, onBack }) {
               onClick={onBack}
               className="mt-4 px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-md shadow-sm transition font-medium"
             >
-              ← Back to Dashboard
+              Back to Dashboard
             </button>
           </div>
         )}
@@ -74,7 +74,7 @@ export default function Report({ results, onBack }) {
             <div>
               <p className="font-medium text-gray-800">Image Authenticity</p>
               <p className="font-mono text-sm break-all mt-1">
-                Hash value: {results.imageHash || 'No hash record'}
+                <span className="font-bold text-lg bg-green-50 ">Hash value</span>: {results.imageHash || 'No hash record'}
               </p>
               <p className="text-xs text-gray-500 mt-2">
                 This hash can be used later to verify if the image has been modified. Re-uploading the same image will produce the same hash.
@@ -84,15 +84,16 @@ export default function Report({ results, onBack }) {
         </div>
         {/* File Info */}
         <div className="mb-8">
+
           <h3 className="text-lg font-semibold text-gray-800 mb-4">File Details</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-gray-500 text-sm">Filename:</p>
-              <p className="font-medium">{file.name}</p>
+              <p className="font-medium">{results.fileName}</p>
             </div>
             <div>
               <p className="text-gray-500 text-sm">Analysis Date:</p>
-              <p className="font-medium">{metadata.timestamp || new Date().toLocaleString()}</p>
+              <p className="font-medium">{results.timeStamp || new Date().toLocaleString()}</p>
             </div>
           </div>
         </div>
@@ -160,15 +161,16 @@ export default function Report({ results, onBack }) {
               </div>
               <div>
                 <p className="text-gray-500 text-sm">Captured Device:</p>
-                <p className="font-medium">{results.metadata?.device || 'Unknown'}</p>
+                <p className="font-medium">{results.device|| 'Unknown'}</p>
               </div>
               <div>
                 <p className="text-gray-500 text-sm">Location (GPS):</p>
-                <p className="font-medium">{results.metadata?.location || 'Unavailable'}</p>
+                <p className="font-medium">{results.location|| 'Unavailable'}</p>
               </div>
             </div>
 
             {results.metadata?.details && Object.keys(results.metadata.details).length > 0 && (
+              
               <div className="mt-4">
                 <h4 className="text-sm font-semibold text-gray-600 mb-2">
                   Extracted Metadata:
@@ -208,7 +210,7 @@ export default function Report({ results, onBack }) {
           <div className="mb-5">
             <h4 className="font-medium text-gray-700 mb-2 flex items-center">
               <span className="bg-gray-200 rounded-full w-5 h-5 flex items-center justify-center mr-2 text-sm">1</span>
-              AI Analysis Summary
+              Model Analysis Summary
             </h4>
             <p className="text-sm pl-7">
               {isFake

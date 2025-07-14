@@ -60,7 +60,7 @@ export default function Upload({ onFileUpload }) {
 
       {/* Footer */}
       <footer className="mt-10 text-center text-gray-600 text-sm">
-        <p>This tool ensures the authenticity of image evidence using advanced forensic techniques and blockchain timestamps.</p>
+        <p>This tool ensures the authenticity of image evidence using advanced forensic techniques and hashing algorithm.</p>
         <p className="mt-1">&copy; {new Date().getFullYear()} Image Evidence Authenticator. All rights reserved.</p>
       </footer>
     </div>
